@@ -9,6 +9,9 @@ AItem::AItem()
 	, TimeConstant(5.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMeshComponent"));
+	RootComponent = ItemMesh;
 }
 
 void AItem::BeginPlay()
@@ -23,10 +26,14 @@ void AItem::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	RunningTime += DeltaTime;
+}
 
-	float DeltaZ = FMath::Sin(RunningTime * TimeConstant) * Amplitude;
-	AddActorWorldOffset(FVector(0.f, 0.f, DeltaZ));
+float AItem::TransformSin(float Value) const
+{
+	return FMath::Sin(Value * TimeConstant) * Amplitude;
+}
 
-	DRAW_SPHERE_SingleFrame(GetActorLocation());
-	DRAW_VECTOR_SingleFrame(GetActorLocation(), GetActorLocation() + GetActorForwardVector() * 100.f);
+float AItem::TransformCos(float Value) const
+{
+	return FMath::Cos(Value * TimeConstant) * Amplitude;
 }
