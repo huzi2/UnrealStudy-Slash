@@ -34,6 +34,7 @@ ASlashCharacter::ASlashCharacter()
 	MoveRightInputAction = CreateDefaultSubobject<UInputAction>(TEXT("MoveRightInputAction"));
 	TurnInputAction = CreateDefaultSubobject<UInputAction>(TEXT("TurnInputAction"));
 	LookUpInputAction = CreateDefaultSubobject<UInputAction>(TEXT("LookUpInputAction"));
+	JumpInputAction = CreateDefaultSubobject<UInputAction>(TEXT("JumpInputAction"));
 }
 
 void ASlashCharacter::BeginPlay()
@@ -64,6 +65,7 @@ void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		Input->BindAction(MoveRightInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::MoveRight);
 		Input->BindAction(TurnInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Turn);
 		Input->BindAction(LookUpInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::LookUp);
+		Input->BindAction(JumpInputAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 	}
 }
 

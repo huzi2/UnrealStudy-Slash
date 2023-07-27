@@ -52,4 +52,7 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* LookUpInputAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* JumpInputAction;
 };
