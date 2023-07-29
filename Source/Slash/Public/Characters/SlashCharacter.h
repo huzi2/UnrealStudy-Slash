@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "CharacterTypes.h"
 #include "SlashCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
+class AItem;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -25,11 +27,16 @@ private:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+public:
+	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
+	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
+
 private:
 	void MoveForward(const FInputActionValue& Value);
 	void MoveRight(const FInputActionValue& Value);
 	void Turn(const FInputActionValue& Value);
 	void LookUp(const FInputActionValue& Value);
+	void EKeyPressed();
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -37,6 +44,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* ViewCamera;
+
+	UPROPERTY(VisibleInstanceOnly)
+	AItem* OverlappingItem;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputMappingContext* DefaultInputMappingContext;
@@ -55,4 +65,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* JumpInputAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* EquipInputAction;
+
+private:
+	ECharacterState CharacterState;
 };

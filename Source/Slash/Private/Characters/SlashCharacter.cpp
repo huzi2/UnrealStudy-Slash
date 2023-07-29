@@ -5,6 +5,7 @@
 #include "GameFrameWork/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFrameWork/CharacterMovementComponent.h"
+#include "Items/Weapons/Weapon.h"
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -12,6 +13,7 @@
 #include "InputActionValue.h"
 
 ASlashCharacter::ASlashCharacter()
+	: CharacterState(ECharacterState::ECS_Unequipped)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -35,6 +37,7 @@ ASlashCharacter::ASlashCharacter()
 	TurnInputAction = CreateDefaultSubobject<UInputAction>(TEXT("TurnInputAction"));
 	LookUpInputAction = CreateDefaultSubobject<UInputAction>(TEXT("LookUpInputAction"));
 	JumpInputAction = CreateDefaultSubobject<UInputAction>(TEXT("JumpInputAction"));
+	EquipInputAction = CreateDefaultSubobject<UInputAction>(TEXT("EquipInputAction"));
 }
 
 void ASlashCharacter::BeginPlay()
@@ -66,6 +69,7 @@ void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		Input->BindAction(TurnInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Turn);
 		Input->BindAction(LookUpInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::LookUp);
 		Input->BindAction(JumpInputAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		Input->BindAction(EquipInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::EKeyPressed);
 	}
 }
 
@@ -109,4 +113,14 @@ void ASlashCharacter::LookUp(const FInputActionValue& Value)
 	float MovementValue = Value.Get<float>();
 
 	AddControllerPitchInput(MovementValue);
+}
+
+void ASlashCharacter::EKeyPressed()
+{
+	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
+	if (OverlappingWeapon)
+	{
+		OverlappingWeapon->Equip(GetMesh(), TEXT("RightHandSocket"));
+		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+	}
 }

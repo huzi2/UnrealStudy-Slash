@@ -40,12 +40,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sine Parameters")
 	float TimeConstant;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UStaticMeshComponent* ItemMesh;
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float RunningTime;
-
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* ItemMesh;
 
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* Sphere;
