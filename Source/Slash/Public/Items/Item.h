@@ -8,6 +8,12 @@
 
 class USphereComponent;
 
+enum class EItemState : uint8
+{
+	EIS_Hovering,
+	EIS_Equipped
+};
+
 UCLASS()
 class SLASH_API AItem : public AActor
 {
@@ -22,10 +28,10 @@ private:
 
 protected:
 	UFUNCTION(BlueprintPure)
-	float TransformSin(float Value) const;
+	float TransformSin() const;
 
 	UFUNCTION(BlueprintPure)
-	float TransformCos(float Value) const;
+	float TransformCos() const;
 
 	UFUNCTION()
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -49,4 +55,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* Sphere;
+
+protected:
+	EItemState ItemState;
 };

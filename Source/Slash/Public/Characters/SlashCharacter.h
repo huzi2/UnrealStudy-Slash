@@ -37,6 +37,14 @@ private:
 	void Turn(const FInputActionValue& Value);
 	void LookUp(const FInputActionValue& Value);
 	void EKeyPressed();
+	void Attack();
+
+	void PlayAttackMontage();
+
+	UFUNCTION(BlueprintCallable)
+	void AttackEnd();
+
+	bool CanAttack() const;
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -47,6 +55,12 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly)
 	AItem* OverlappingItem;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+	UAnimMontage* AttackMontage;
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	EActionState ActionState;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputMappingContext* DefaultInputMappingContext;
@@ -68,6 +82,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* EquipInputAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* AttackInputAction;
 
 private:
 	ECharacterState CharacterState;

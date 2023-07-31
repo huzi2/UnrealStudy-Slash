@@ -13,7 +13,8 @@
 #include "InputActionValue.h"
 
 ASlashCharacter::ASlashCharacter()
-	: CharacterState(ECharacterState::ECS_Unequipped)
+	: ActionState(EActionState::EAS_Unoccupied), 
+	  CharacterState(ECharacterState::ECS_Unequipped)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -38,6 +39,7 @@ ASlashCharacter::ASlashCharacter()
 	LookUpInputAction = CreateDefaultSubobject<UInputAction>(TEXT("LookUpInputAction"));
 	JumpInputAction = CreateDefaultSubobject<UInputAction>(TEXT("JumpInputAction"));
 	EquipInputAction = CreateDefaultSubobject<UInputAction>(TEXT("EquipInputAction"));
+	AttackInputAction = CreateDefaultSubobject<UInputAction>(TEXT("AttackInputAction"));
 }
 
 void ASlashCharacter::BeginPlay()
@@ -70,11 +72,14 @@ void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		Input->BindAction(LookUpInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::LookUp);
 		Input->BindAction(JumpInputAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 		Input->BindAction(EquipInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::EKeyPressed);
+		Input->BindAction(AttackInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Attack);
 	}
 }
 
 void ASlashCharacter::MoveForward(const FInputActionValue& Value)
 {
+	if (ActionState == EActionState::EAS_Attacking) return;
+
 	float MovementValue = Value.Get<float>();
 
 	if (Controller && MovementValue != 0.f)
@@ -89,6 +94,8 @@ void ASlashCharacter::MoveForward(const FInputActionValue& Value)
 
 void ASlashCharacter::MoveRight(const FInputActionValue& Value)
 {
+	if (ActionState == EActionState::EAS_Attacking) return;
+
 	float MovementValue = Value.Get<float>();
 
 	if (Controller && MovementValue != 0.f)
@@ -123,4 +130,49 @@ void ASlashCharacter::EKeyPressed()
 		OverlappingWeapon->Equip(GetMesh(), TEXT("RightHandSocket"));
 		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
 	}
+}
+
+void ASlashCharacter::Attack()
+{
+	if (CanAttack())
+	{
+		PlayAttackMontage();
+		ActionState = EActionState::EAS_Attacking;
+	}
+}
+
+void ASlashCharacter::PlayAttackMontage()
+{
+	if (!AttackMontage) return;
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Play(AttackMontage);
+
+		FName SectionName = FName();
+		const int32 Selection = FMath::RandRange(0, 1);
+		switch (Selection)
+		{
+		case 0:
+			SectionName = TEXT("Attack1");
+			break;
+		case 1:
+			SectionName = TEXT("Attack2");
+			break;
+		default:
+			break;
+		}
+		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
+	}
+}
+
+void ASlashCharacter::AttackEnd()
+{
+	ActionState = EActionState::EAS_Unoccupied;
+}
+
+bool ASlashCharacter::CanAttack() const
+{
+	return ActionState == EActionState::EAS_Unoccupied && CharacterState != ECharacterState::ECS_Unequipped;
 }

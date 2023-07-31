@@ -8,6 +8,7 @@ void AWeapon::Equip(USceneComponent* InParent, const FName& InSocketName)
 	if (ItemMesh && InParent)
 	{
 		ItemMesh->AttachToComponent(InParent, FAttachmentTransformRules::SnapToTargetIncludingScale, InSocketName);
+		ItemState = EItemState::EIS_Equipped;
 	}
 }
 
