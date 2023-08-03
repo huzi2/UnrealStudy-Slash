@@ -55,6 +55,9 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void FinishEquipping();
 
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
+
 	bool CanAttack() const;
 	bool CanDisarm() const;
 	bool CanArm() const;

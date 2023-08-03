@@ -6,6 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFrameWork/CharacterMovementComponent.h"
 #include "Items/Weapons/Weapon.h"
+#include "Components/BoxComponent.h"
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -220,6 +221,14 @@ void ASlashCharacter::Arm()
 void ASlashCharacter::FinishEquipping()
 {
 	ActionState = EActionState::EAS_Unoccupied;
+}
+
+void ASlashCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled)
+{
+	if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
+	{
+		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
+	}
 }
 
 bool ASlashCharacter::CanAttack() const

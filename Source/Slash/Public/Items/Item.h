@@ -22,8 +22,10 @@ class SLASH_API AItem : public AActor
 protected:
 	AItem();
 
-private:
+protected:
 	virtual void BeginPlay() override;
+
+private:
 	virtual void Tick(float DeltaTime) override;
 
 protected:

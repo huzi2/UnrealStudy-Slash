@@ -18,15 +18,22 @@ class SLASH_API AWeapon : public AItem
 private:
 	AWeapon();
 
-public:
-	void Equip(USceneComponent* InParent, const FName& InSocketName);
-
 protected:
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
 	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
 
+private:
+	virtual void BeginPlay() override;
+
 public:
+	FORCEINLINE UBoxComponent* GetWeaponBox() const { return WeaponBox; }
+
+	void Equip(USceneComponent* InParent, const FName& InSocketName);
 	void AttachMeshToSocket(USceneComponent* InParent, const FName& InSocketName);
+
+private:
+	UFUNCTION()
+	void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
@@ -34,4 +41,10 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	UBoxComponent* WeaponBox;
+
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* BoxTraceStart;
+
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* BoxTraceEnd;
 };
