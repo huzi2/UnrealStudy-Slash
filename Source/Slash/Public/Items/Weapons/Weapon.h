@@ -47,4 +47,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* BoxTraceEnd;
+
+public:
+	TArray<AActor*> IgnoreActors;
 };
