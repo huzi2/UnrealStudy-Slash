@@ -19,6 +19,11 @@ private:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+public:
+	void ReceiveDamage(const float Damage);
+	const float GetHealthPercent() const;
+	const bool IsAlive() const;
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
 	float Health;

@@ -10,6 +10,7 @@
 #include "NiagaraComponent.h"
 
 AWeapon::AWeapon()
+	: Damage(20.f)
 {
 	WeaponBox = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponBox"));
 	WeaponBox->SetupAttachment(GetRootComponent());
@@ -41,10 +42,13 @@ void AWeapon::BeginPlay()
 	WeaponBox->OnComponentBeginOverlap.AddDynamic(this, &AWeapon::OnBoxOverlap);
 }
 
-void AWeapon::Equip(USceneComponent* InParent, const FName& InSocketName)
+void AWeapon::Equip(USceneComponent* InParent, const FName& InSocketName, AActor* NewOwner, APawn* NewInstigator)
 {
 	if (ItemMesh && InParent)
 	{
+		SetOwner(NewOwner);
+		SetInstigator(NewInstigator);
+
 		AttachMeshToSocket(InParent, InSocketName);
 		ItemState = EItemState::EIS_Equipped;
 
@@ -89,6 +93,8 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 
 	if (BoxHit.GetActor())
 	{
+		UGameplayStatics::ApplyDamage(BoxHit.GetActor(), Damage, GetInstigator()->GetController(), this, UDamageType::StaticClass());
+
 		IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor());
 		if (HitInterface)
 		{

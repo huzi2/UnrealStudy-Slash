@@ -17,3 +17,18 @@ void UAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
+
+void UAttributeComponent::ReceiveDamage(const float Damage)
+{
+	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
+}
+
+const float UAttributeComponent::GetHealthPercent() const
+{
+	return Health / MaxHealth;
+}
+
+const bool UAttributeComponent::IsAlive() const
+{
+	return Health > 0.f;
+}
