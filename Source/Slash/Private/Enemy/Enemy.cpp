@@ -8,8 +8,12 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/AttributeComponent.h"
 #include "HUD/HealthBarComponent.h"
+#include "GameFrameWork/CharacterMovementComponent.h"
+#include "AIController.h"
 
 AEnemy::AEnemy()
+	: DeathPose(EDeathPose::EDP_Alive)
+	, CombatRadius(500.0)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -24,11 +28,20 @@ AEnemy::AEnemy()
 
 	HealthBarWidget = CreateDefaultSubobject<UHealthBarComponent>(TEXT("HealthBar"));
 	HealthBarWidget->SetupAttachment(GetRootComponent());
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
 }
 
 void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 {
 	//DRAW_SPHERE_COLOR(ImpactPoint, FColor::Orange);
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetVisibility(true);
+	}
 
 	if (Attributes && Attributes->IsAlive())
 	{
@@ -53,11 +66,46 @@ void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetVisibility(false);
+	}
+
+	EnemyController = Cast<AAIController>(GetController());
+	if (EnemyController && PatrolTarget)
+	{
+		FAIMoveRequest MoveRequest;
+		MoveRequest.SetGoalActor(PatrolTarget);
+		MoveRequest.SetAcceptanceRadius(15.f);
+		FNavPathSharedPtr NavPath;
+		EnemyController->MoveTo(MoveRequest, &NavPath);
+
+		const TArray<FNavPathPoint>& PathPoints = NavPath->GetPathPoints();
+		for (const FNavPathPoint& Point : PathPoints)
+		{
+			const FVector& Location = Point.Location;
+			DrawDebugSphere(GetWorld(), Location, 12.f, 12, FColor::Green, false, 10.f);
+		}
+	}
 }
 
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (CombatTarget)
+	{
+		const double DistanceToTarget = (CombatTarget->GetActorLocation() - GetActorLocation()).Size();
+		if (DistanceToTarget > CombatRadius)
+		{
+			CombatTarget = nullptr;
+			if (HealthBarWidget)
+			{
+				HealthBarWidget->SetVisibility(false);
+			}
+		}
+	}
 }
 
 void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -76,6 +124,12 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 			HealthBarWidget->SetHealthBarPercent(Attributes->GetHealthPercent());
 		}
 	}
+
+	if (EventInstigator)
+	{
+		CombatTarget = EventInstigator->GetPawn();
+	}
+
 	return 0.0f;
 }
 
@@ -158,21 +212,27 @@ void AEnemy::Die()
 		{
 		case 0:
 			SectionName = TEXT("Death1");
+			DeathPose = EDeathPose::EDP_Death1;
 			break;
 		case 1:
 			SectionName = TEXT("Death2");
+			DeathPose = EDeathPose::EDP_Death2;
 			break;
 		case 2:
 			SectionName = TEXT("Death3");
+			DeathPose = EDeathPose::EDP_Death3;
 			break;
 		case 3:
 			SectionName = TEXT("Death4");
+			DeathPose = EDeathPose::EDP_Death4;
 			break;
 		case 4:
 			SectionName = TEXT("Death5");
+			DeathPose = EDeathPose::EDP_Death5;
 			break;
 		case 5:
 			SectionName = TEXT("Death6");
+			DeathPose = EDeathPose::EDP_Death6;
 			break;
 		default:
 			break;
@@ -180,4 +240,16 @@ void AEnemy::Die()
 
 		AnimInstance->Montage_JumpToSection(SectionName, DeathMontage);
 	}
+
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetVisibility(false);
+	}
+
+	if (GetCapsuleComponent())
+	{
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
+	SetLifeSpan(3.f);
 }
