@@ -54,6 +54,8 @@ void ASlashCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultInputMappingContext, 0);
 		}
 	}
+
+	Tags.Add(TEXT("SlashCharacter"));
 }
 
 void ASlashCharacter::Tick(float DeltaTime)

@@ -11,6 +11,7 @@
 class UAttributeComponent;
 class UHealthBarComponent;
 class AAIController;
+class UPawnSensingComponent;
 
 UCLASS()
 class SLASH_API AEnemy : public ACharacter, public IHitInterface
@@ -30,9 +31,19 @@ private:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
+	UFUNCTION()
+	void PawnSee(APawn* SeenPawn);
+
+private:
 	void PlayHitReactMontage(const FName& SectionName);
 	void DirectionalHitReact(const FVector& ImpactPoint);
 	void Die();
+	void CheckCombatTarget();
+	void CheckPatrolTarget();
+	const bool InTargetRange(AActor* Target, double Radius) const;
+	void MoveToTarget(AActor* Target);
+	AActor* ChoosePatrolTarget() const;
+	void PatrolTimerFinished();
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
@@ -44,6 +55,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	UHealthBarComponent* HealthBarWidget;
+
+	UPROPERTY(VisibleAnywhere)
+	UPawnSensingComponent* PawnSensing;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Montages")
 	UAnimMontage* HitReactMontage;
@@ -63,6 +77,12 @@ private:
 	UPROPERTY(EditAnywhere)
 	double CombatRadius;
 
+	UPROPERTY(EditAnywhere)
+	double AttackRadius;
+
+	UPROPERTY(EditAnywhere)
+	double PatrolRadius;
+
 	UPROPERTY()
 	AAIController* EnemyController;
 
@@ -71,4 +91,14 @@ private:
 
 	UPROPERTY(EditInstanceOnly, Category = "AI Navigation")
 	TArray<AActor*> PatrolTargets;
+
+	UPROPERTY(EditAnywhere, Category = "AI Navigation")
+	float WaitMin;
+
+	UPROPERTY(EditAnywhere, Category = "AI Navigation")
+	float WaitMax;
+
+private:
+	FTimerHandle PatrolTimer;
+	EEnemyState EnemyState;
 };
