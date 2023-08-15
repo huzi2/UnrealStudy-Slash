@@ -6,7 +6,6 @@
 #include "Camera/CameraComponent.h"
 #include "GameFrameWork/CharacterMovementComponent.h"
 #include "Items/Weapons/Weapon.h"
-#include "Components/BoxComponent.h"
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -77,6 +76,51 @@ void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		Input->BindAction(EquipInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::EKeyPressed);
 		Input->BindAction(AttackInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Attack);
 	}
+}
+
+void ASlashCharacter::Attack()
+{
+	if (CanAttack())
+	{
+		PlayAttackMontage();
+		ActionState = EActionState::EAS_Attacking;
+	}
+}
+
+void ASlashCharacter::PlayAttackMontage()
+{
+	if (!AttackMontage) return;
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Play(AttackMontage);
+
+		FName SectionName = FName();
+		const int32 Selection = FMath::RandRange(0, 1);
+		switch (Selection)
+		{
+		case 0:
+			SectionName = TEXT("Attack1");
+			break;
+		case 1:
+			SectionName = TEXT("Attack2");
+			break;
+		default:
+			break;
+		}
+		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
+	}
+}
+
+bool ASlashCharacter::CanAttack() const
+{
+	return ActionState == EActionState::EAS_Unoccupied && CharacterState != ECharacterState::ECS_Unequipped;
+}
+
+void ASlashCharacter::AttackEnd()
+{
+	ActionState = EActionState::EAS_Unoccupied;
 }
 
 void ASlashCharacter::MoveForward(const FInputActionValue& Value)
@@ -152,41 +196,6 @@ void ASlashCharacter::EKeyPressed()
 	}
 }
 
-void ASlashCharacter::Attack()
-{
-	if (CanAttack())
-	{
-		PlayAttackMontage();
-		ActionState = EActionState::EAS_Attacking;
-	}
-}
-
-void ASlashCharacter::PlayAttackMontage()
-{
-	if (!AttackMontage) return;
-
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance)
-	{
-		AnimInstance->Montage_Play(AttackMontage);
-
-		FName SectionName = FName();
-		const int32 Selection = FMath::RandRange(0, 1);
-		switch (Selection)
-		{
-		case 0:
-			SectionName = TEXT("Attack1");
-			break;
-		case 1:
-			SectionName = TEXT("Attack2");
-			break;
-		default:
-			break;
-		}
-		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
-	}
-}
-
 void ASlashCharacter::PlayEquipMontage(const FName& SectionName)
 {
 	if (!EquipMontage) return;
@@ -197,11 +206,6 @@ void ASlashCharacter::PlayEquipMontage(const FName& SectionName)
 		AnimInstance->Montage_Play(EquipMontage);
 		AnimInstance->Montage_JumpToSection(SectionName, EquipMontage);
 	}
-}
-
-void ASlashCharacter::AttackEnd()
-{
-	ActionState = EActionState::EAS_Unoccupied;
 }
 
 void ASlashCharacter::Disarm()
@@ -223,20 +227,6 @@ void ASlashCharacter::Arm()
 void ASlashCharacter::FinishEquipping()
 {
 	ActionState = EActionState::EAS_Unoccupied;
-}
-
-void ASlashCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled)
-{
-	if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
-	{
-		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
-		EquippedWeapon->IgnoreActors.Empty();
-	}
-}
-
-bool ASlashCharacter::CanAttack() const
-{
-	return ActionState == EActionState::EAS_Unoccupied && CharacterState != ECharacterState::ECS_Unequipped;
 }
 
 bool ASlashCharacter::CanDisarm() const

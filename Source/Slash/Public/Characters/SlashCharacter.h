@@ -3,20 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Characters/BaseCharacter.h"
 #include "CharacterTypes.h"
 #include "SlashCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
 class AItem;
-class AWeapon;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 
 UCLASS()
-class SLASH_API ASlashCharacter : public ACharacter
+class SLASH_API ASlashCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -28,6 +27,12 @@ private:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+private:
+	virtual void Attack() override;
+	virtual void PlayAttackMontage() override;
+	virtual bool CanAttack() const override;
+	virtual void AttackEnd() override;
+
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
@@ -38,13 +43,8 @@ private:
 	void Turn(const FInputActionValue& Value);
 	void LookUp(const FInputActionValue& Value);
 	void EKeyPressed();
-	void Attack();
 
-	void PlayAttackMontage();
 	void PlayEquipMontage(const FName& SectionName);
-
-	UFUNCTION(BlueprintCallable)
-	void AttackEnd();
 
 	UFUNCTION(BlueprintCallable)
 	void Disarm();
@@ -55,10 +55,6 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void FinishEquipping();
 
-	UFUNCTION(BlueprintCallable)
-	void SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
-
-	bool CanAttack() const;
 	bool CanDisarm() const;
 	bool CanArm() const;
 
@@ -73,16 +69,10 @@ private:
 	AItem* OverlappingItem;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Montages")
-	UAnimMontage* AttackMontage;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Montages")
 	UAnimMontage* EquipMontage;
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	EActionState ActionState;
-
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	AWeapon* EquippedWeapon;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputMappingContext* DefaultInputMappingContext;
