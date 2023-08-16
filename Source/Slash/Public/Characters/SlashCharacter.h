@@ -28,9 +28,9 @@ private:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+	virtual const bool CanAttack() const override;
+
 	virtual void Attack() override;
-	virtual void PlayAttackMontage() override;
-	virtual bool CanAttack() const override;
 	virtual void AttackEnd() override;
 
 public:
@@ -38,14 +38,6 @@ public:
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
 
 private:
-	void MoveForward(const FInputActionValue& Value);
-	void MoveRight(const FInputActionValue& Value);
-	void Turn(const FInputActionValue& Value);
-	void LookUp(const FInputActionValue& Value);
-	void EKeyPressed();
-
-	void PlayEquipMontage(const FName& SectionName);
-
 	UFUNCTION(BlueprintCallable)
 	void Disarm();
 
@@ -55,8 +47,16 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void FinishEquipping();
 
+private:
 	bool CanDisarm() const;
 	bool CanArm() const;
+
+	void MoveForward(const FInputActionValue& Value);
+	void MoveRight(const FInputActionValue& Value);
+	void Turn(const FInputActionValue& Value);
+	void LookUp(const FInputActionValue& Value);
+	void EKeyPressed();
+	void PlayEquipMontage(const FName& SectionName);
 
 private:
 	UPROPERTY(VisibleAnywhere)
