@@ -2,7 +2,6 @@
 
 
 #include "Enemy/Enemy.h"
-#include "Components/CapsuleComponent.h"
 #include "HUD/HealthBarComponent.h"
 #include "GameFrameWork/CharacterMovementComponent.h"
 #include "AIController.h"
@@ -15,8 +14,8 @@ AEnemy::AEnemy()
 	, CombatRadius(1000.0)
 	, AttackRadius(150.0)
 	, PatrolRadius(200.0)
-	, WaitMin(5.f)
-	, WaitMax(10.f)
+	, PatrolWaitMin(5.f)
+	, PatrolWaitMax(10.f)
 	, PatrollingSpeed(125.f)
 	, ChasingSpeed(300.f)
 	, AttackMin(0.5f)
@@ -29,8 +28,6 @@ AEnemy::AEnemy()
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
-
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 
 	HealthBarWidget = CreateDefaultSubobject<UHealthBarComponent>(TEXT("HealthBar"));
 	HealthBarWidget->SetupAttachment(GetRootComponent());
@@ -45,47 +42,18 @@ AEnemy::AEnemy()
 	bUseControllerRotationRoll = false;
 }
 
-void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
-{
-	ShowHealthBar();
-
-	if (IsAlive())
-	{
-		DirectionalHitReact(ImpactPoint);
-	}
-	else
-	{
-		Die();
-	}
-
-	PlayHitSound(ImpactPoint);
-	SpawnHitParticles(ImpactPoint);
-}
-
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-
-	HideHealthBar();
-
-	EnemyController = Cast<AAIController>(GetController());
-	MoveToTarget(PatrolTarget);
 
 	if (PawnSensing)
 	{
 		PawnSensing->OnSeePawn.AddDynamic(this, &AEnemy::PawnSee);
 	}
+	
+	InitializeEnemy();
 
-	UWorld* World = GetWorld();
-	if (World && WeaponClass)
-	{
-		AWeapon* DefaultWeapon = World->SpawnActor<AWeapon>(WeaponClass);
-		if (DefaultWeapon)
-		{
-			DefaultWeapon->Equip(GetMesh(), TEXT("RightHandSocket"), this, this);
-			EquippedWeapon = DefaultWeapon;
-		}
-	}
+	Tags.Add(TEXT("Enemy"));
 }
 
 void AEnemy::Tick(float DeltaTime)
@@ -102,6 +70,13 @@ void AEnemy::Tick(float DeltaTime)
 	{
 		CheckPatrolTarget();
 	}
+}
+
+void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
+{
+	Super::GetHit_Implementation(ImpactPoint);
+
+	ShowHealthBar();
 }
 
 float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -187,7 +162,7 @@ void AEnemy::PawnSee(APawn* SeenPawn)
 		EnemyState != EEnemyState::EES_Dead &&
 		EnemyState != EEnemyState::EES_Chasing &&
 		EnemyState < EEnemyState::EES_Attacking &&
-		SeenPawn->ActorHasTag(TEXT("SlashCharacter"));
+		SeenPawn->ActorHasTag(TEXT("EngageableTarget"));
 
 	if (bShouldChaseTarget)
 	{
@@ -240,6 +215,28 @@ const bool AEnemy::IsEngaged() const
 	return EnemyState == EEnemyState::EES_Engaged;
 }
 
+void AEnemy::InitializeEnemy()
+{
+	EnemyController = Cast<AAIController>(GetController());
+	HideHealthBar();
+	MoveToTarget(PatrolTarget);
+	SpawnDefaultWeapon();
+}
+
+void AEnemy::SpawnDefaultWeapon()
+{
+	UWorld* World = GetWorld();
+	if (World && WeaponClass)
+	{
+		AWeapon* DefaultWeapon = World->SpawnActor<AWeapon>(WeaponClass);
+		if (DefaultWeapon)
+		{
+			DefaultWeapon->Equip(GetMesh(), TEXT("RightHandSocket"), this, this);
+			EquippedWeapon = DefaultWeapon;
+		}
+	}
+}
+
 void AEnemy::CheckCombatTarget()
 {
 	// 타겟이 전투 거리를 벗어남. 다시 패트롤 시작
@@ -275,7 +272,7 @@ void AEnemy::CheckPatrolTarget()
 	if (InTargetRange(PatrolTarget, PatrolRadius))
 	{
 		PatrolTarget = ChoosePatrolTarget();
-		const float WaitTime = FMath::RandRange(WaitMin, WaitMax);
+		const float WaitTime = FMath::RandRange(PatrolWaitMin, PatrolWaitMax);
 		GetWorldTimerManager().SetTimer(PatrolTimer, this, &AEnemy::PatrolTimerFinished, WaitTime);
 	}
 }

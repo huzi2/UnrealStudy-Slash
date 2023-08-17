@@ -19,14 +19,14 @@ class SLASH_API AEnemy : public ABaseCharacter
 private:
 	AEnemy();
 
-public:
-	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
-
 private:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void Destroyed() override;
+
+private:
+	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
 
 private:
 	virtual const bool CanAttack() const override;
@@ -51,6 +51,8 @@ private:
 	const bool IsDead() const;
 	const bool IsEngaged() const;
 
+	void InitializeEnemy();
+	void SpawnDefaultWeapon();
 	void CheckCombatTarget();
 	void CheckPatrolTarget();
 	void ClearPatrolTimer();
@@ -104,10 +106,10 @@ private:
 	TArray<AActor*> PatrolTargets;
 
 	UPROPERTY(EditAnywhere, Category = "AI Navigation")
-	float WaitMin;
+	float PatrolWaitMin;
 
 	UPROPERTY(EditAnywhere, Category = "AI Navigation")
-	float WaitMax;
+	float PatrolWaitMax;
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	float PatrollingSpeed;

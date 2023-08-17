@@ -15,7 +15,7 @@ class UInputAction;
 struct FInputActionValue;
 
 UCLASS()
-class SLASH_API ASlashCharacter : public ABaseCharacter
+class SLASH_API ASlashCharacter : public ABaseCharacter 
 {
 	GENERATED_BODY()
 
@@ -24,8 +24,10 @@ public:
 
 private:
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
+	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
 
 private:
 	virtual const bool CanAttack() const override;
@@ -39,17 +41,17 @@ public:
 
 private:
 	UFUNCTION(BlueprintCallable)
-	void Disarm();
+	void AttachWeaponToBack();
 
 	UFUNCTION(BlueprintCallable)
-	void Arm();
+	void AttachWeaponToHand();
 
 	UFUNCTION(BlueprintCallable)
 	void FinishEquipping();
 
 private:
-	bool CanDisarm() const;
-	bool CanArm() const;
+	const bool CanDisarm() const;
+	const bool CanArm() const;
 
 	void MoveForward(const FInputActionValue& Value);
 	void MoveRight(const FInputActionValue& Value);
@@ -57,6 +59,9 @@ private:
 	void LookUp(const FInputActionValue& Value);
 	void EKeyPressed();
 	void PlayEquipMontage(const FName& SectionName);
+	void EquipWeapon(AWeapon* Weapon);
+	void DisArm();
+	void Arm();
 
 private:
 	UPROPERTY(VisibleAnywhere)

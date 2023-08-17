@@ -18,10 +18,6 @@ class SLASH_API AWeapon : public AItem
 private:
 	AWeapon();
 
-protected:
-	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
-	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
-
 private:
 	virtual void BeginPlay() override;
 
@@ -40,6 +36,14 @@ private:
 	void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 private:
+	const bool ActorIsSameType(AActor* OtherActor) const;
+	void PlayEquipSound();
+	void DisableSphereCollision();
+	void DeactivateEmbers();
+	void BoxTrace(FHitResult& BoxHit);
+	void ExecuteGetHit(const FHitResult& BoxHit);
+
+private:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	USoundBase* EquipSound;
 
@@ -51,6 +55,12 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* BoxTraceEnd;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	FVector BoxTraceExtent;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	bool bShowBoxDebug;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	float Damage;

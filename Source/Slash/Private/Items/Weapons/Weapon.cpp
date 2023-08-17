@@ -10,7 +10,9 @@
 #include "NiagaraComponent.h"
 
 AWeapon::AWeapon()
-	: Damage(20.f)
+	: BoxTraceExtent(FVector(5.f))
+	, bShowBoxDebug(false)
+	, Damage(20.f)
 {
 	WeaponBox = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponBox"));
 	WeaponBox->SetupAttachment(GetRootComponent());
@@ -25,16 +27,6 @@ AWeapon::AWeapon()
 	BoxTraceEnd->SetupAttachment(GetRootComponent());
 }
 
-void AWeapon::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	Super::OnSphereOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-}
-
-void AWeapon::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	Super::OnSphereEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
-}
-
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
@@ -46,26 +38,15 @@ void AWeapon::Equip(USceneComponent* InParent, const FName& InSocketName, AActor
 {
 	if (ItemMesh && InParent)
 	{
+		ItemState = EItemState::EIS_Equipped;
+		
 		SetOwner(NewOwner);
 		SetInstigator(NewInstigator);
 
 		AttachMeshToSocket(InParent, InSocketName);
-		ItemState = EItemState::EIS_Equipped;
-
-		if (EquipSound)
-		{
-			UGameplayStatics::PlaySoundAtLocation(this, EquipSound, GetActorLocation());
-		}
-
-		if (Sphere)
-		{
-			Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		}
-
-		if (EmbersEffect)
-		{
-			EmbersEffect->Deactivate();
-		}
+		DisableSphereCollision();
+		PlayEquipSound();
+		DeactivateEmbers();
 	}
 }
 
@@ -76,6 +57,54 @@ void AWeapon::AttachMeshToSocket(USceneComponent* InParent, const FName& InSocke
 }
 
 void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (ActorIsSameType(OtherActor)) return;
+
+	FHitResult BoxHit;
+	BoxTrace(BoxHit);
+
+	if (BoxHit.GetActor())
+	{
+		if (ActorIsSameType(BoxHit.GetActor())) return;
+
+		UGameplayStatics::ApplyDamage(BoxHit.GetActor(), Damage, GetInstigator()->GetController(), this, UDamageType::StaticClass());
+
+		ExecuteGetHit(BoxHit);
+		// 부술 수 있는 프랍이면 부수도록 필드 시스템 액터를 생성한다. 내부 코드는 블루프린트에서 정의
+		CreateFields(BoxHit.ImpactPoint);
+	}
+}
+
+const bool AWeapon::ActorIsSameType(AActor* OtherActor) const
+{
+	return GetOwner()->ActorHasTag(TEXT("Enemy")) && OtherActor->ActorHasTag(TEXT("Enemy"));
+}
+
+void AWeapon::PlayEquipSound()
+{
+	if (EquipSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, EquipSound, GetActorLocation());
+	}
+}
+
+void AWeapon::DisableSphereCollision()
+{
+	if (Sphere)
+	{
+		Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
+void AWeapon::DeactivateEmbers()
+{
+	if (EmbersEffect)
+	{
+		EmbersEffect->Deactivate();
+	}
+}
+
+void AWeapon::BoxTrace(FHitResult& BoxHit)
 {
 	const FVector Start = BoxTraceStart->GetComponentLocation();
 	const FVector End = BoxTraceEnd->GetComponentLocation();
@@ -88,22 +117,20 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		ActorsToIgnore.AddUnique(Actor);
 	}
 
-	FHitResult BoxHit;
-	UKismetSystemLibrary::BoxTraceSingle(this, Start, End, FVector(5.f, 5.f, 5.f), BoxTraceStart->GetComponentRotation(), ETraceTypeQuery::TraceTypeQuery1, false, ActorsToIgnore, EDrawDebugTrace::None, BoxHit, true);
+	UKismetSystemLibrary::BoxTraceSingle(this, Start, End, BoxTraceExtent, BoxTraceStart->GetComponentRotation(), ETraceTypeQuery::TraceTypeQuery1, false, ActorsToIgnore, bShowBoxDebug ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None, BoxHit, true);
 
+	// 한 액터에 여러번 중복 히트되지 않도록함
 	if (BoxHit.GetActor())
 	{
-		UGameplayStatics::ApplyDamage(BoxHit.GetActor(), Damage, GetInstigator()->GetController(), this, UDamageType::StaticClass());
-
-		IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor());
-		if (HitInterface)
-		{
-			HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint);
-		}
-		// 한 액터에 여러번 중복 히트되지 않도록함
 		IgnoreActors.AddUnique(BoxHit.GetActor());
+	}
+}
 
-		// 부술 수 있는 프랍이면 부수도록 필드 시스템 액터를 생성한다. 내부 코드는 블루프린트에서 정의
-		CreateFields(BoxHit.ImpactPoint);
+void AWeapon::ExecuteGetHit(const FHitResult& BoxHit)
+{
+	IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor());
+	if (HitInterface)
+	{
+		HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint);
 	}
 }
