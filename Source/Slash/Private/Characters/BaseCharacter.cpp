@@ -9,6 +9,7 @@
 #include "Components/CapsuleComponent.h"
 
 ABaseCharacter::ABaseCharacter()
+	: WarpTargetDistance(75.f)
 {
 	PrimaryActorTick.bCanEverTick = false;
 
@@ -17,11 +18,11 @@ ABaseCharacter::ABaseCharacter()
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 }
 
-void ABaseCharacter::GetHit_Implementation(const FVector& ImpactPoint)
+void ABaseCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 {
-	if (IsAlive())
+	if (IsAlive() && Hitter)
 	{
-		DirectionalHitReact(ImpactPoint);
+		DirectionalHitReact(Hitter->GetActorLocation());
 	}
 	else
 	{
@@ -30,6 +31,7 @@ void ABaseCharacter::GetHit_Implementation(const FVector& ImpactPoint)
 
 	PlayHitSound(ImpactPoint);
 	SpawnHitParticles(ImpactPoint);
+	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ABaseCharacter::AttackEnd()
@@ -74,6 +76,30 @@ void ABaseCharacter::SetWeaponCollisionEnabled(const ECollisionEnabled::Type Col
 		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
 		EquippedWeapon->IgnoreActors.Empty();
 	}
+}
+
+const FVector ABaseCharacter::GetTranslationWarpTarget() const
+{
+	// 타겟에서 일정거리(WarpTargetDistance) 떨어진 만큼의 위치를 구함
+	if (CombatTarget)
+	{
+		const FVector& CombatTargetLocation = CombatTarget->GetActorLocation();
+		const FVector& Location = GetActorLocation();
+
+		FVector TargetToMe = (Location - CombatTargetLocation).GetSafeNormal();
+		TargetToMe *= WarpTargetDistance;
+		return CombatTargetLocation + TargetToMe;
+	}
+	return FVector();
+}
+
+const FVector ABaseCharacter::GetRotationWarpTarget() const
+{
+	if (CombatTarget)
+	{
+		return CombatTarget->GetActorLocation();
+	}
+	return FVector();
 }
 
 const bool ABaseCharacter::IsAlive() const
@@ -179,5 +205,16 @@ void ABaseCharacter::DisableCapsule()
 	if (GetCapsuleComponent())
 	{
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
+void ABaseCharacter::StopAttackMontage()
+{
+	if (!AttackMontage) return;
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Stop(0.25f, AttackMontage);
 	}
 }

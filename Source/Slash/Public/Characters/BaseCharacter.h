@@ -19,7 +19,7 @@ protected:
 	ABaseCharacter();
 
 protected:
-	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
+	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
 
 protected:
 	UFUNCTION(BlueprintCallable)
@@ -38,6 +38,12 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SetWeaponCollisionEnabled(const ECollisionEnabled::Type CollisionEnabled);
 
+	UFUNCTION(BlueprintCallable)
+	const FVector GetTranslationWarpTarget() const;
+
+	UFUNCTION(BlueprintCallable)
+	const FVector GetRotationWarpTarget() const;
+
 protected:
 	const bool IsAlive() const;
 
@@ -48,6 +54,7 @@ protected:
 	void PlayMontageSection(UAnimMontage* Montage, const FName& SectionName);
 	const int32 PlayRandomMontageSection(UAnimMontage* Montage, const TArray<FName>& SectionNames);
 	void DisableCapsule();
+	void StopAttackMontage();
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -55,6 +62,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	AWeapon* EquippedWeapon;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	AActor* CombatTarget;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Combat")
@@ -77,4 +87,7 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TArray<FName> DeathMontageSections;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float WarpTargetDistance;
 };

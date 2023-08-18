@@ -26,7 +26,7 @@ private:
 	virtual void Destroyed() override;
 
 private:
-	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
+	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
 
 private:
 	virtual const bool CanAttack() const override;
@@ -83,9 +83,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AWeapon> WeaponClass;
-
-	UPROPERTY()
-	AActor* CombatTarget;
 	
 	UPROPERTY(EditAnywhere)
 	double CombatRadius;
