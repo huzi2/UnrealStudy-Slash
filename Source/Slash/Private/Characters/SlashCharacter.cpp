@@ -6,6 +6,9 @@
 #include "Camera/CameraComponent.h"
 #include "GameFrameWork/CharacterMovementComponent.h"
 #include "Items/Weapons/Weapon.h"
+#include "HUD/SlashHUD.h"
+#include "HUD/SlashOverlay.h"
+#include "Components/AttributeComponent.h"
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -61,6 +64,8 @@ void ASlashCharacter::BeginPlay()
 	}
 
 	Tags.Add(TEXT("EngageableTarget"));
+
+	InitializeSlashOverlay();
 }
 
 void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -73,7 +78,7 @@ void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		Input->BindAction(MoveRightInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::MoveRight);
 		Input->BindAction(TurnInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Turn);
 		Input->BindAction(LookUpInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::LookUp);
-		Input->BindAction(JumpInputAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		Input->BindAction(JumpInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Jump);
 		Input->BindAction(EquipInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::EKeyPressed);
 		Input->BindAction(AttackInputAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Attack);
 	}
@@ -82,7 +87,16 @@ void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 float ASlashCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	HandleDamage(DamageAmount);
+	SetHUDHealth();
 	return DamageAmount;
+}
+
+void ASlashCharacter::Jump()
+{
+	if (IsUnoccupied())
+	{
+		Super::Jump();
+	}
 }
 
 void ASlashCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
@@ -94,7 +108,7 @@ void ASlashCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* 
 
 const bool ASlashCharacter::CanAttack() const
 {
-	return ActionState == EActionState::EAS_Unoccupied && CharacterState != ECharacterState::ECS_Unequipped;
+	return IsUnoccupied() && CharacterState != ECharacterState::ECS_Unequipped;
 }
 
 void ASlashCharacter::Attack()
@@ -143,17 +157,22 @@ void ASlashCharacter::HitReactEnd()
 
 const bool ASlashCharacter::CanDisarm() const
 {
-	return ActionState == EActionState::EAS_Unoccupied && CharacterState != ECharacterState::ECS_Unequipped;
+	return IsUnoccupied() && CharacterState != ECharacterState::ECS_Unequipped;
 }
 
 const bool ASlashCharacter::CanArm() const
 {
-	return ActionState == EActionState::EAS_Unoccupied && CharacterState == ECharacterState::ECS_Unequipped && EquippedWeapon;
+	return IsUnoccupied() && CharacterState == ECharacterState::ECS_Unequipped && EquippedWeapon;
+}
+
+const bool ASlashCharacter::IsUnoccupied() const
+{
+	return ActionState == EActionState::EAS_Unoccupied;
 }
 
 void ASlashCharacter::MoveForward(const FInputActionValue& Value)
 {
-	if (ActionState != EActionState::EAS_Unoccupied) return;
+	if (!IsUnoccupied()) return;
 
 	float MovementValue = Value.Get<float>();
 
@@ -169,7 +188,7 @@ void ASlashCharacter::MoveForward(const FInputActionValue& Value)
 
 void ASlashCharacter::MoveRight(const FInputActionValue& Value)
 {
-	if (ActionState != EActionState::EAS_Unoccupied) return;
+	if (!IsUnoccupied()) return;
 
 	float MovementValue = Value.Get<float>();
 
@@ -251,4 +270,32 @@ void ASlashCharacter::Arm()
 	PlayEquipMontage(TEXT("Equip"));
 	CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
 	ActionState = EActionState::EAS_EquippingWeapon;
+}
+
+void ASlashCharacter::InitializeSlashOverlay()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(Controller);
+	if (PlayerController)
+	{
+		ASlashHUD* SlashHUD = Cast<ASlashHUD>(PlayerController->GetHUD());
+		if (SlashHUD)
+		{
+			SlashOverlay = SlashHUD->GetSlashOverlay();
+			SetHUDHealth();
+			if (SlashOverlay)
+			{
+				SlashOverlay->SetStaminaBarPercent(1.f);
+				SlashOverlay->SetGold(0);
+				SlashOverlay->SetSouls(0);
+			}
+		}
+	}
+}
+
+void ASlashCharacter::SetHUDHealth()
+{
+	if (SlashOverlay && Attributes)
+	{
+		SlashOverlay->SetHealthBarPercent(Attributes->GetHealthPercent());
+	}
 }

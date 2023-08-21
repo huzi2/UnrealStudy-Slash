@@ -10,6 +10,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class AItem;
+class USlashOverlay;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -26,6 +27,7 @@ private:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual void Jump() override;
 
 private:
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
@@ -56,6 +58,7 @@ private:
 private:
 	const bool CanDisarm() const;
 	const bool CanArm() const;
+	const bool IsUnoccupied() const;
 
 	void MoveForward(const FInputActionValue& Value);
 	void MoveRight(const FInputActionValue& Value);
@@ -66,6 +69,9 @@ private:
 	void EquipWeapon(AWeapon* Weapon);
 	void DisArm();
 	void Arm();
+
+	void InitializeSlashOverlay();
+	void SetHUDHealth();
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -106,6 +112,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* AttackInputAction;
+
+	UPROPERTY()
+	USlashOverlay* SlashOverlay;
 
 private:
 	ECharacterState CharacterState;
