@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Characters/BaseCharacter.h"
-#include "Characters/CharacterTypes.h"
 #include "Enemy.generated.h"
 
 class UHealthBarComponent;
@@ -35,7 +34,6 @@ private:
 	virtual void AttackEnd() override;
 	virtual void Die() override;
 	virtual void HandleDamage(const float DamageAmount) override;
-	virtual const int32 PlayDeathMontage() override;
 
 private:
 	UFUNCTION()
@@ -68,9 +66,6 @@ private:
 	void ClearAttackTimer();
 
 protected:
-	UPROPERTY(BlueprintReadOnly)
-	TEnumAsByte<EDeathPose> DeathPose;
-
 	UPROPERTY(BlueprintReadOnly)
 	EEnemyState EnemyState;
 

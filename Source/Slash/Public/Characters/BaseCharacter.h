@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/HitInterface.h"
+#include "Characters/CharacterTypes.h"
 #include "BaseCharacter.generated.h"
 
 class AWeapon;
@@ -44,6 +45,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	const FVector GetRotationWarpTarget() const;
 
+public:
+	FORCEINLINE TEnumAsByte<EDeathPose> GetDeathPose() const { return DeathPose; }
+
 protected:
 	const bool IsAlive() const;
 
@@ -55,6 +59,7 @@ protected:
 	const int32 PlayRandomMontageSection(UAnimMontage* Montage, const TArray<FName>& SectionNames);
 	void DisableCapsule();
 	void StopAttackMontage();
+	void DisableMeshCollision();
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -65,6 +70,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	AActor* CombatTarget;
+
+	UPROPERTY(BlueprintReadOnly)
+	TEnumAsByte<EDeathPose> DeathPose;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Combat")
