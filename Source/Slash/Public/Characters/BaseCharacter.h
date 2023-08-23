@@ -26,6 +26,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	virtual void AttackEnd();
 
+	UFUNCTION(BlueprintCallable)
+	virtual void DodgeEnd();
+
 protected:
 	virtual const bool CanAttack() const;
 
@@ -34,6 +37,7 @@ protected:
 	virtual void HandleDamage(const float DamageAmount);
 	virtual const int32 PlayAttackMontage();
 	virtual const int32 PlayDeathMontage();
+	virtual void PlayDodgeMontage();
 
 protected:
 	UFUNCTION(BlueprintCallable)
@@ -89,6 +93,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	UAnimMontage* DeathMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	UAnimMontage* DodgeMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TArray<FName> AttackMontageSections;

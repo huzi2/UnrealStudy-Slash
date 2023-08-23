@@ -9,6 +9,7 @@
 class UHealthBarComponent;
 class AAIController;
 class UPawnSensingComponent;
+class ASoul;
 
 UCLASS()
 class SLASH_API AEnemy : public ABaseCharacter
@@ -64,6 +65,7 @@ private:
 	void ChaseTarget();
 	void StartAttackTimer();
 	void ClearAttackTimer();
+	void SpawnSoul();
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
@@ -117,6 +119,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	float DeathLifeSpan;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TSubclassOf<ASoul> SoulClass;
 
 private:
 	FTimerHandle PatrolTimer;

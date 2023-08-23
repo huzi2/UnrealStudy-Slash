@@ -8,6 +8,7 @@
 
 class USphereComponent;
 class UNiagaraComponent;
+class UNiagaraSystem;
 
 enum class EItemState : uint8
 {
@@ -43,6 +44,10 @@ protected:
 	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 protected:
+	void SpawnPickupSystem();
+	void SpawnPickupSound();
+
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sine Parameters")
 	float Amplitude;
 
@@ -58,9 +63,15 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UNiagaraComponent* ItemEffect;
 
+	UPROPERTY(EditAnywhere)
+	USoundBase* PickupSound;
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float RunningTime;
+
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* PickupEffect;
 
 protected:
 	EItemState ItemState;

@@ -42,6 +42,10 @@ void ABaseCharacter::AttackEnd()
 	}
 }
 
+void ABaseCharacter::DodgeEnd()
+{
+}
+
 const bool ABaseCharacter::CanAttack() const
 {
 	return false;
@@ -80,6 +84,11 @@ const int32 ABaseCharacter::PlayDeathMontage()
 	}
 
 	return Selection;
+}
+
+void ABaseCharacter::PlayDodgeMontage()
+{
+	PlayMontageSection(DodgeMontage, TEXT("Default"));
 }
 
 void ABaseCharacter::SetWeaponCollisionEnabled(const ECollisionEnabled::Type CollisionEnabled)
