@@ -14,6 +14,7 @@ AEnemy::AEnemy()
 	: EnemyState(EEnemyState::EES_Patrolling)
 	, CombatRadius(1000.0)
 	, AttackRadius(150.0)
+	, AcceptanceRadius(50.f)
 	, PatrolRadius(200.0)
 	, PatrolWaitMin(5.f)
 	, PatrolWaitMax(10.f)
@@ -84,6 +85,11 @@ void AEnemy::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 	ClearPatrolTimer();
 	ClearAttackTimer();
 	StopAttackMontage();
+
+	if (IsInsideAttackRadius() && !IsDead())
+	{
+		StartAttackTimer();
+	}
 }
 
 float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -239,7 +245,7 @@ void AEnemy::SpawnDefaultWeapon()
 		AWeapon* DefaultWeapon = World->SpawnActor<AWeapon>(WeaponClass);
 		if (DefaultWeapon)
 		{
-			DefaultWeapon->Equip(GetMesh(), TEXT("RightHandSocket"), this, this);
+			DefaultWeapon->Equip(GetMesh(), TEXT("WeaponSocket"), this, this);
 			EquippedWeapon = DefaultWeapon;
 		}
 	}
@@ -296,7 +302,7 @@ void AEnemy::MoveToTarget(AActor* Target)
 
 	FAIMoveRequest MoveRequest;
 	MoveRequest.SetGoalActor(Target);
-	MoveRequest.SetAcceptanceRadius(50.f);
+	MoveRequest.SetAcceptanceRadius(AcceptanceRadius);
 	EnemyController->MoveTo(MoveRequest);
 }
 
