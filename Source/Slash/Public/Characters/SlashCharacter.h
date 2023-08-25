@@ -41,7 +41,7 @@ private:
 	virtual void Attack() override;
 	virtual void AttackEnd() override;
 	virtual void DodgeEnd() override;
-	virtual void Die() override;
+	virtual void Die_Implementation() override;
 
 public:
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }

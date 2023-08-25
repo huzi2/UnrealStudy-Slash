@@ -55,12 +55,6 @@ void ABaseCharacter::Attack()
 {
 }
 
-void ABaseCharacter::Die()
-{
-	Tags.Add(TEXT("Dead"));
-	PlayDeathMontage();
-}
-
 void ABaseCharacter::HandleDamage(const float DamageAmount)
 {
 	if (Attributes)
@@ -122,6 +116,12 @@ const FVector ABaseCharacter::GetRotationWarpTarget() const
 		return CombatTarget->GetActorLocation();
 	}
 	return FVector();
+}
+
+void ABaseCharacter::Die_Implementation()
+{
+	Tags.Add(TEXT("Dead"));
+	PlayDeathMontage();
 }
 
 const bool ABaseCharacter::IsAlive() const

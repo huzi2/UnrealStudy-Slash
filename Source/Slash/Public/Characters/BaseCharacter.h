@@ -33,7 +33,7 @@ protected:
 	virtual const bool CanAttack() const;
 
 	virtual void Attack();
-	virtual void Die();
+
 	virtual void HandleDamage(const float DamageAmount);
 	virtual const int32 PlayAttackMontage();
 	virtual const int32 PlayDeathMontage();
@@ -48,6 +48,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	const FVector GetRotationWarpTarget() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void Die();
 
 public:
 	FORCEINLINE TEnumAsByte<EDeathPose> GetDeathPose() const { return DeathPose; }
