@@ -1,5 +1,8 @@
 # UnrealStudy-Slash
 
+<img width="798" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/0f1197fe-405b-40c1-93ab-86e6ff45739d">
+
+
 ## 프로젝트 개요
 언리얼 5.1 C++을 활용한 3인칭 싱글 액션 게임
 
