@@ -7,6 +7,7 @@
 <img width="506" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/4abfbbbd-7626-4a82-95a4-b08f79945deb">
 <img width="410" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/39f46374-f32f-4452-8214-8170841f5ad7">
 <img width="678" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/be774c97-826d-435a-8604-06773f651600">
+<img width="1489" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/b16214d7-ffcb-4cd2-bd30-c11eb68a2a3c">
 
 ## 프로젝트 개요
 언리얼 5.1 C++을 활용한 3인칭 싱글 액션 게임
