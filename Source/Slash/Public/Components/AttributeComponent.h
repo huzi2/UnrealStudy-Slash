@@ -15,20 +15,17 @@ class SLASH_API UAttributeComponent : public UActorComponent
 private:
 	UAttributeComponent();
 
-private:
-	virtual void BeginPlay() override;
-
 public:
-	FORCEINLINE const float GetStamina() const { return Stamina; }
-	FORCEINLINE const int32 GetGold() const { return Gold; }
-	FORCEINLINE const int32 GetSouls() const { return Souls; }
-	FORCEINLINE const float GetDodgeCost() const { return DodgeCost; }
+	FORCEINLINE float GetStamina() const { return Stamina; }
+	FORCEINLINE int32 GetGold() const { return Gold; }
+	FORCEINLINE int32 GetSouls() const { return Souls; }
+	FORCEINLINE float GetDodgeCost() const { return DodgeCost; }
 
 	void ReceiveDamage(const float Damage);
 	void UseStamina(const float StaminaCost);
-	const float GetHealthPercent() const;
-	const float GetStaminaPercent() const;
-	const bool IsAlive() const;
+	float GetHealthPercent() const;
+	float GetStaminaPercent() const;
+	bool IsAlive() const;
 	void AddGold(const int32 AmountOfGold);
 	void AddSouls(const int32 NumberOfSouls);
 	void RegenStamina(const float DeltaTime);

@@ -159,7 +159,7 @@ void ASlashCharacter::AddSouls(ASoul* Soul)
 	}
 }
 
-const bool ASlashCharacter::CanAttack() const
+bool ASlashCharacter::CanAttack() const
 {
 	return IsUnoccupied() && CharacterState != ECharacterState::ECS_Unequipped;
 }
@@ -223,22 +223,22 @@ void ASlashCharacter::HitReactEnd()
 	ActionState = EActionState::EAS_Unoccupied;
 }
 
-const bool ASlashCharacter::CanDisarm() const
+bool ASlashCharacter::CanDisarm() const
 {
 	return IsUnoccupied() && CharacterState != ECharacterState::ECS_Unequipped;
 }
 
-const bool ASlashCharacter::CanArm() const
+bool ASlashCharacter::CanArm() const
 {
 	return IsUnoccupied() && CharacterState == ECharacterState::ECS_Unequipped && EquippedWeapon;
 }
 
-const bool ASlashCharacter::IsUnoccupied() const
+bool ASlashCharacter::IsUnoccupied() const
 {
 	return ActionState == EActionState::EAS_Unoccupied;
 }
 
-const bool ASlashCharacter::HasEnoughStamina() const
+bool ASlashCharacter::HasEnoughStamina() const
 {
 	return Attributes && Attributes->GetStamina() > Attributes->GetDodgeCost();
 }

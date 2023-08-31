@@ -27,16 +27,16 @@ protected:
 	virtual void AttackEnd();
 
 	UFUNCTION(BlueprintCallable)
-	virtual void DodgeEnd();
+	virtual void DodgeEnd() {}
 
 protected:
-	virtual const bool CanAttack() const;
+	virtual bool CanAttack() const { return false; }
 
-	virtual void Attack();
+	virtual void Attack() {}
 
 	virtual void HandleDamage(const float DamageAmount);
-	virtual const int32 PlayAttackMontage();
-	virtual const int32 PlayDeathMontage();
+	virtual int32 PlayAttackMontage();
+	virtual int32 PlayDeathMontage();
 	virtual void PlayDodgeMontage();
 
 protected:
@@ -53,17 +53,17 @@ protected:
 	void Die();
 
 public:
-	FORCEINLINE TEnumAsByte<EDeathPose> GetDeathPose() const { return DeathPose; }
+	FORCEINLINE const TEnumAsByte<EDeathPose>& GetDeathPose() const { return DeathPose; }
 
 protected:
-	const bool IsAlive() const;
+	bool IsAlive() const;
 
 	void PlayHitReactMontage(const FName& SectionName);
 	void DirectionalHitReact(const FVector& ImpactPoint);
 	void PlayHitSound(const FVector& ImpactPoint);
 	void SpawnHitParticles(const FVector& ImpactPoint);
 	void PlayMontageSection(UAnimMontage* Montage, const FName& SectionName);
-	const int32 PlayRandomMontageSection(UAnimMontage* Montage, const TArray<FName>& SectionNames);
+	int32 PlayRandomMontageSection(UAnimMontage* Montage, const TArray<FName>& SectionNames);
 	void DisableCapsule();
 	void StopAttackMontage();
 	void DisableMeshCollision();

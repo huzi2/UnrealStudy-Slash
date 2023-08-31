@@ -23,25 +23,25 @@ public:
 	ASlashCharacter();
 
 private:
-	virtual void BeginPlay() override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	virtual void Tick(float DeltaSeconds) override;
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-	virtual void Jump() override;
+	virtual void BeginPlay() final;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) final;
+	virtual void Tick(float DeltaSeconds) final;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) final;
+	virtual void Jump() final;
 
 private:
-	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
-	virtual void SetOverlappingItem(AItem* Item) override;
-	virtual void AddGold(ATreasure* Treasure) override;
-	virtual void AddSouls(ASoul* Soul) override;
+	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) final;
+	virtual void SetOverlappingItem(AItem* Item) final;
+	virtual void AddGold(ATreasure* Treasure) final;
+	virtual void AddSouls(ASoul* Soul) final;
 
 private:
-	virtual const bool CanAttack() const override;
+	virtual bool CanAttack() const final;
 
-	virtual void Attack() override;
-	virtual void AttackEnd() override;
-	virtual void DodgeEnd() override;
-	virtual void Die_Implementation() override;
+	virtual void Attack() final;
+	virtual void AttackEnd() final;
+	virtual void DodgeEnd() final;
+	virtual void Die_Implementation() final;
 
 public:
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
@@ -61,10 +61,10 @@ private:
 	void HitReactEnd();
 
 private:
-	const bool CanDisarm() const;
-	const bool CanArm() const;
-	const bool IsUnoccupied() const;
-	const bool HasEnoughStamina() const;
+	bool CanDisarm() const;
+	bool CanArm() const;
+	bool IsUnoccupied() const;
+	bool HasEnoughStamina() const;
 
 	void MoveForward(const FInputActionValue& Value);
 	void MoveRight(const FInputActionValue& Value);

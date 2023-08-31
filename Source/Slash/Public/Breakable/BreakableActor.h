@@ -19,11 +19,8 @@ class SLASH_API ABreakableActor : public AActor, public IHitInterface
 private:
 	ABreakableActor();
 
-public:
-	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
-
 private:
-	virtual void BeginPlay() override;
+	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) final;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

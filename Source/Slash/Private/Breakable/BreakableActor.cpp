@@ -39,8 +39,3 @@ void ABreakableActor::GetHit_Implementation(const FVector& ImpactPoint, AActor* 
 		World->SpawnActor<ATreasure>(TreasureClasses[Selection], Location, GetActorRotation());
 	}
 }
-
-void ABreakableActor::BeginPlay()
-{
-	Super::BeginPlay();
-}

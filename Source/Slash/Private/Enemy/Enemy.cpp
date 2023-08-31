@@ -123,7 +123,7 @@ void AEnemy::Destroyed()
 	}
 }
 
-const bool AEnemy::CanAttack() const
+bool AEnemy::CanAttack() const
 {
 	return IsInsideAttackRadius() && !IsAttacking() && !IsEngaged() && !IsDead();
 }
@@ -186,7 +186,7 @@ void AEnemy::PawnSee(APawn* SeenPawn)
 	}
 }
 
-const bool AEnemy::InTargetRange(AActor* Target, double Radius) const
+bool AEnemy::InTargetRange(AActor* Target, const double Radius) const
 {
 	if (!Target) return false;
 
@@ -194,37 +194,37 @@ const bool AEnemy::InTargetRange(AActor* Target, double Radius) const
 	return DistanceToTarget <= Radius;
 }
 
-const bool AEnemy::IsOutsideCombatRadius() const
+bool AEnemy::IsOutsideCombatRadius() const
 {
 	return !InTargetRange(CombatTarget, CombatRadius);
 }
 
-const bool AEnemy::IsOutsideAttackRadius() const
+bool AEnemy::IsOutsideAttackRadius() const
 {
 	return !InTargetRange(CombatTarget, AttackRadius);
 }
 
-const bool AEnemy::IsInsideAttackRadius() const
+bool AEnemy::IsInsideAttackRadius() const
 {
 	return InTargetRange(CombatTarget, AttackRadius);
 }
 
-const bool AEnemy::IsChasing() const
+bool AEnemy::IsChasing() const
 {
 	return EnemyState == EEnemyState::EES_Chasing;
 }
 
-const bool AEnemy::IsAttacking() const
+bool AEnemy::IsAttacking() const
 {
 	return EnemyState == EEnemyState::EES_Attacking;
 }
 
-const bool AEnemy::IsDead() const
+bool AEnemy::IsDead() const
 {
 	return EnemyState == EEnemyState::EES_Dead;
 }
 
-const bool AEnemy::IsEngaged() const
+bool AEnemy::IsEngaged() const
 {
 	return EnemyState == EEnemyState::EES_Engaged;
 }

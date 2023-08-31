@@ -42,19 +42,6 @@ void ABaseCharacter::AttackEnd()
 	}
 }
 
-void ABaseCharacter::DodgeEnd()
-{
-}
-
-const bool ABaseCharacter::CanAttack() const
-{
-	return false;
-}
-
-void ABaseCharacter::Attack()
-{
-}
-
 void ABaseCharacter::HandleDamage(const float DamageAmount)
 {
 	if (Attributes)
@@ -63,12 +50,12 @@ void ABaseCharacter::HandleDamage(const float DamageAmount)
 	}
 }
 
-const int32 ABaseCharacter::PlayAttackMontage()
+int32 ABaseCharacter::PlayAttackMontage()
 {
 	return PlayRandomMontageSection(AttackMontage, AttackMontageSections);
 }
 
-const int32 ABaseCharacter::PlayDeathMontage()
+int32 ABaseCharacter::PlayDeathMontage()
 {
 	const int32 Selection = PlayRandomMontageSection(DeathMontage, DeathMontageSections);
 	TEnumAsByte<EDeathPose> Pose(Selection);
@@ -111,11 +98,7 @@ const FVector ABaseCharacter::GetTranslationWarpTarget() const
 
 const FVector ABaseCharacter::GetRotationWarpTarget() const
 {
-	if (CombatTarget)
-	{
-		return CombatTarget->GetActorLocation();
-	}
-	return FVector();
+	return CombatTarget ? CombatTarget->GetActorLocation() : FVector();
 }
 
 void ABaseCharacter::Die_Implementation()
@@ -124,7 +107,7 @@ void ABaseCharacter::Die_Implementation()
 	PlayDeathMontage();
 }
 
-const bool ABaseCharacter::IsAlive() const
+bool ABaseCharacter::IsAlive() const
 {
 	return Attributes && Attributes->IsAlive();
 }
@@ -211,7 +194,7 @@ void ABaseCharacter::PlayMontageSection(UAnimMontage* Montage, const FName& Sect
 	}
 }
 
-const int32 ABaseCharacter::PlayRandomMontageSection(UAnimMontage* Montage, const TArray<FName>& SectionNames)
+int32 ABaseCharacter::PlayRandomMontageSection(UAnimMontage* Montage, const TArray<FName>& SectionNames)
 {
 	if (!Montage) return -1;
 	if (SectionNames.IsEmpty()) return -1;

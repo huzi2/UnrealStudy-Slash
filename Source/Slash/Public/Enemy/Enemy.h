@@ -20,35 +20,35 @@ private:
 	AEnemy();
 
 private:
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-	virtual void Destroyed() override;
+	virtual void BeginPlay() final;
+	virtual void Tick(float DeltaTime) final;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) final;
+	virtual void Destroyed() final;
 
 private:
-	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
+	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) final;
 
 private:
-	virtual const bool CanAttack() const override;
+	virtual bool CanAttack() const final;
 
-	virtual void Attack() override;
-	virtual void AttackEnd() override;
-	virtual void Die_Implementation() override;
-	virtual void HandleDamage(const float DamageAmount) override;
+	virtual void Attack() final;
+	virtual void AttackEnd() final;
+	virtual void Die_Implementation() final;
+	virtual void HandleDamage(const float DamageAmount) final;
 
 private:
 	UFUNCTION()
 	void PawnSee(APawn* SeenPawn);
 
 private:
-	const bool InTargetRange(AActor* Target, double Radius) const;
-	const bool IsOutsideCombatRadius() const;
-	const bool IsOutsideAttackRadius() const;
-	const bool IsInsideAttackRadius() const;
-	const bool IsChasing() const;
-	const bool IsAttacking() const;
-	const bool IsDead() const;
-	const bool IsEngaged() const;
+	bool InTargetRange(AActor* Target, const double Radius) const;
+	bool IsOutsideCombatRadius() const;
+	bool IsOutsideAttackRadius() const;
+	bool IsInsideAttackRadius() const;
+	bool IsChasing() const;
+	bool IsAttacking() const;
+	bool IsDead() const;
+	bool IsEngaged() const;
 
 	void InitializeEnemy();
 	void SpawnDefaultWeapon();

@@ -18,8 +18,8 @@ class SLASH_API USlashAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 	
 private:
-	virtual void NativeInitializeAnimation() override;
-	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+	virtual void NativeInitializeAnimation() final;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) final;
 
 protected:
 	UPROPERTY(BlueprintReadOnly)

@@ -10,11 +10,6 @@ UAttributeComponent::UAttributeComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UAttributeComponent::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 void UAttributeComponent::ReceiveDamage(const float Damage)
 {
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
@@ -25,17 +20,17 @@ void UAttributeComponent::UseStamina(const float StaminaCost)
 	Stamina = FMath::Clamp(Stamina - StaminaCost, 0.f, MaxStamina);
 }
 
-const float UAttributeComponent::GetHealthPercent() const
+float UAttributeComponent::GetHealthPercent() const
 {
 	return Health / MaxHealth;
 }
 
-const float UAttributeComponent::GetStaminaPercent() const
+float UAttributeComponent::GetStaminaPercent() const
 {
 	return Stamina / MaxStamina;
 }
 
-const bool UAttributeComponent::IsAlive() const
+bool UAttributeComponent::IsAlive() const
 {
 	return Health > 0.f;
 }
