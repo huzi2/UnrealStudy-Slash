@@ -247,7 +247,7 @@ void ASlashCharacter::MoveForward(const FInputActionValue& Value)
 {
 	if (!IsUnoccupied()) return;
 
-	float MovementValue = Value.Get<float>();
+	const float MovementValue = Value.Get<float>();
 
 	if (Controller && MovementValue != 0.f)
 	{
@@ -263,7 +263,7 @@ void ASlashCharacter::MoveRight(const FInputActionValue& Value)
 {
 	if (!IsUnoccupied()) return;
 
-	float MovementValue = Value.Get<float>();
+	const float MovementValue = Value.Get<float>();
 
 	if (Controller && MovementValue != 0.f)
 	{
@@ -277,14 +277,14 @@ void ASlashCharacter::MoveRight(const FInputActionValue& Value)
 
 void ASlashCharacter::Turn(const FInputActionValue& Value)
 {
-	float MovementValue = Value.Get<float>();
+	const float MovementValue = Value.Get<float>();
 
 	AddControllerYawInput(MovementValue);
 }
 
 void ASlashCharacter::LookUp(const FInputActionValue& Value)
 {
-	float MovementValue = Value.Get<float>();
+	const float MovementValue = Value.Get<float>();
 
 	AddControllerPitchInput(MovementValue);
 }

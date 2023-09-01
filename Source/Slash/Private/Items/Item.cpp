@@ -48,16 +48,6 @@ void AItem::Tick(float DeltaTime)
 	}
 }
 
-float AItem::TransformSin() const
-{
-	return FMath::Sin(RunningTime * TimeConstant) * Amplitude;
-}
-
-float AItem::TransformCos() const
-{
-	return FMath::Cos(RunningTime * TimeConstant) * Amplitude;
-}
-
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	IPickupInterface* PickupInterface = Cast<IPickupInterface>(OtherActor);
@@ -74,6 +64,16 @@ void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	{
 		PickupInterface->SetOverlappingItem(nullptr);
 	}
+}
+
+float AItem::TransformSin() const
+{
+	return FMath::Sin(RunningTime * TimeConstant) * Amplitude;
+}
+
+float AItem::TransformCos() const
+{
+	return FMath::Cos(RunningTime * TimeConstant) * Amplitude;
 }
 
 void AItem::SpawnPickupSystem()

@@ -34,6 +34,25 @@ void AWeapon::BeginPlay()
 	WeaponBox->OnComponentBeginOverlap.AddDynamic(this, &AWeapon::OnBoxOverlap);
 }
 
+void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (ActorIsSameType(OtherActor)) return;
+
+	FHitResult BoxHit;
+	BoxTrace(BoxHit);
+
+	if (BoxHit.GetActor())
+	{
+		if (ActorIsSameType(BoxHit.GetActor())) return;
+
+		UGameplayStatics::ApplyDamage(BoxHit.GetActor(), Damage, GetInstigator()->GetController(), this, UDamageType::StaticClass());
+
+		ExecuteGetHit(BoxHit);
+		// 부술 수 있는 프랍이면 부수도록 필드 시스템 액터를 생성한다. 내부 코드는 블루프린트에서 정의
+		CreateFields(BoxHit.ImpactPoint);
+	}
+}
+
 void AWeapon::Equip(USceneComponent* InParent, const FName& InSocketName, AActor* NewOwner, APawn* NewInstigator)
 {
 	if (ItemMesh && InParent)
@@ -52,27 +71,8 @@ void AWeapon::Equip(USceneComponent* InParent, const FName& InSocketName, AActor
 
 void AWeapon::AttachMeshToSocket(USceneComponent* InParent, const FName& InSocketName)
 {
-	FAttachmentTransformRules TransformRules(EAttachmentRule::SnapToTarget, true);
+	const FAttachmentTransformRules TransformRules(EAttachmentRule::SnapToTarget, true);
 	ItemMesh->AttachToComponent(InParent, TransformRules, InSocketName);
-}
-
-void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (ActorIsSameType(OtherActor)) return;
-
-	FHitResult BoxHit;
-	BoxTrace(BoxHit);
-
-	if (BoxHit.GetActor())
-	{
-		if (ActorIsSameType(BoxHit.GetActor())) return;
-
-		UGameplayStatics::ApplyDamage(BoxHit.GetActor(), Damage, GetInstigator()->GetController(), this, UDamageType::StaticClass());
-
-		ExecuteGetHit(BoxHit);
-		// 부술 수 있는 프랍이면 부수도록 필드 시스템 액터를 생성한다. 내부 코드는 블루프린트에서 정의
-		CreateFields(BoxHit.ImpactPoint);
-	}
 }
 
 const bool AWeapon::ActorIsSameType(AActor* OtherActor) const

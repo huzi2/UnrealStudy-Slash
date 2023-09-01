@@ -13,7 +13,7 @@
 
 ABird::ABird()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	Capsule->SetCapsuleHalfHeight(20.f);
@@ -51,11 +51,6 @@ void ABird::BeginPlay()
 	}
 }
 
-void ABird::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 void ABird::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -70,7 +65,7 @@ void ABird::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ABird::MoveForward(const FInputActionValue& Value)
 {
-	float MovementValue = Value.Get<float>();
+	const float MovementValue = Value.Get<float>();
 
 	if (Controller && MovementValue != 0.f)
 	{
@@ -81,14 +76,14 @@ void ABird::MoveForward(const FInputActionValue& Value)
 
 void ABird::Turn(const FInputActionValue& Value)
 {
-	float MovementValue = Value.Get<float>();
+	const float MovementValue = Value.Get<float>();
 	
 	AddControllerYawInput(MovementValue);
 }
 
 void ABird::LookUp(const FInputActionValue& Value)
 {
-	float MovementValue = Value.Get<float>();
+	const float MovementValue = Value.Get<float>();
 
 	AddControllerPitchInput(MovementValue);
 }

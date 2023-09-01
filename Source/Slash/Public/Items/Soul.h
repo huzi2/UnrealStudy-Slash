@@ -18,12 +18,12 @@ private:
 	ASoul();
 
 private:
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
-	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
+	virtual void BeginPlay() final;
+	virtual void Tick(float DeltaTime) final;
+	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) final;
 
 public:
-	FORCEINLINE const int32 GetSouls() const { return Souls; }
+	FORCEINLINE int32 GetSouls() const { return Souls; }
 	FORCEINLINE void SetSouls(const int32 NumberOfSouls) { Souls = NumberOfSouls; }
 
 private:
