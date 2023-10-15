@@ -11,9 +11,9 @@
 
 ## 프로젝트 영상
 
-![Video Label](http://img.youtube.com/vi/haN_bnpZDMk/0.jpg)
+![Video Label](http://img.youtube.com/vi/y67-mekP58E/0.jpg)
 
-기술 소개()
+기술 소개(https://youtu.be/y67-mekP58E)
 
 ## 프로젝트 개요
 언리얼 5.1 C++을 활용한 3인칭 액션 게임
