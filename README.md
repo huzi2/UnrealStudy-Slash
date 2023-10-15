@@ -42,9 +42,9 @@
 
 ## 기술 스크린 샷
 
-<img width="1139" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/44d04b0b-47a1-4c9a-a1a6-1fae7d6681b3">
+<img width="1144" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/44255e9f-3784-4088-b27d-9da066e5bad0">
 
-공격 애님 노티파이 활용(사운드 재생, 트레일 이펙트, 공격 종료 체크, 공격 콜리전 온/오프)
+공격 애님 노티파이 활용(사운드 재생, 트레일 이펙트, 공격 종료 체크, 공격 콜리전 온/오프, 모션 워핑)
 
 <img width="1148" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/497267db-be6c-4a29-b6d1-3a40a5295dc1">
 
@@ -64,6 +64,17 @@ MainStates 애니메이션 블루프린트. 플레이어의 스테이트에 따�
 <img width="807" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/b355f60c-a2a9-4292-b239-b00708e162e3">
 
 MainStates, IK 두 애니메이션 블루프린트를 합치는 애니메이션 블루프린트
+
+<img width="764" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/d8ee4fce-dc54-48f2-81a2-080ec884899d">
+<img width="253" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/7dc6e225-cce7-46c9-b3c5-7151f127e1b4">
+<img width="476" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/c6b0720e-9908-4e26-907e-4663f2ea3df8">
+<img width="754" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/319f3153-274c-455e-b5ea-ed852d5f7a2f">
+
+적 캐릭터 애니메이션 블루프린트 템플릿
+
+<img width="1897" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/c15daa6e-1af4-455a-aa86-9f690fbf2b16">
+
+애니메이션 블루프린트 템플릿으로 생성한 애니메이션 블루프린트
 
 <img width="1093" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/e4c9e559-17ff-4dbc-9584-616740155d6a">
 <img width="1138" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/60053711-b631-4dfe-a864-282fa1eb3b00">
