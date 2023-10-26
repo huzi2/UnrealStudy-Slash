@@ -3,8 +3,6 @@
 <img width="1418" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/5e559b88-0bb7-4955-b303-d44a9e46d458">
 <img width="1489" alt="image" src="https://github.com/huzi2/UnrealStudy-Slash/assets/31639085/b16214d7-ffcb-4cd2-bd30-c11eb68a2a3c">
 
-## 프로젝트 영상
-
 ![Video Label](http://img.youtube.com/vi/y67-mekP58E/0.jpg)
 
 - [프로젝트 영상](https://youtu.be/y67-mekP58E)
