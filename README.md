@@ -23,6 +23,9 @@
 
 ## 사용 기술([위키](https://github.com/huzi2/UnrealStudy-Slash/wiki))
 
+### 비어있는 내용은 다른 프로젝트 위키 참고
+- [YGMActionGame](https://github.com/huzi2/UnrealPortfolio-YGMActionGame/wiki)
+
 ### 게임 로직
 - [오픈 월드](https://github.com/huzi2/UnrealStudy-Slash/wiki/게임-로직#오픈-월드)
 - 무기
